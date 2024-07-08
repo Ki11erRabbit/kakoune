@@ -38,38 +38,48 @@ add-highlighter shared/koka regions
 add-highlighter shared/koka/code default-region group
 
 add-highlighter shared/koka/comment region '//' '$' fill comment
-add-highlighter shared/koka/block_comment   region -recurse /\*\*\* /\*\*\* \*/            fill comment
+add-highlighter shared/koka/block_comment region /\* \*/ fill comment
 
 # strings and characters
 add-highlighter shared/koka/string region '"' (?<!\\)(\\\\)*" group
 add-highlighter shared/koka/string/ fill string
 add-highlighter shared/koka/string/ regex '(?:\\n|\\r|\\t|\\\\|\\''|\\"|\\x[0-9a-fA-F]{2}|\\u\{[0-9a-fA-F]+\})' 0:meta
 
-add-highlighter shared/koka/character region "'" (?<!\\)(\\\\)*' group
+add-highlighter shared/koka/character region "(?<!\w)'" (?<!\\)(\\\\)*' group
 add-highlighter shared/koka/character/ fill string
 add-highlighter shared/koka/character/ regex '(?:\\n|\\r|\\t|\\\\|\\''|\\"|\\x[0-9a-fA-F]{2}|\\u\{[0-9a-fA-F]+\})' 0:meta
 
 # operators
-add-highlighter shared/koka/code/ regex '(?:\+|-|\*|/|%|=|<|>|&|\||\^|~|\?|!|:)' 0:operator
+add-highlighter shared/koka/code/ regex '(?:->|<-|\+|-|\*|/|%|=|<|>|&|\||\^|~|\?|!|$|\.|:=)' 0:operator
 #identifiers
 add-highlighter shared/koka/code/ regex %{\b[^\s\d!<>]+(?:\d+[^\s\d!^<^>]*)*'?\b} 0:Default
 add-highlighter shared/koka/code/ regex \b([^/^\s]+/) 0:type
+
 # keywords
 add-highlighter shared/koka/code/ regex '\b(?:infix|infixr|infixl)\b' 0:keyword
 add-highlighter shared/koka/code/ regex '\b(?:module|import|pub|abstract|as)\b' 0:keyword
 add-highlighter shared/koka/code/ regex '\b(?:type|struct|alias)\b' 0:keyword
 add-highlighter shared/koka/code/ regex '\b(?:effect|ctl|named)\b' 0:keyword
-add-highlighter shared/koka/code/ regex '\b(?:fun|fn|unsafe|extern)\b' 0:keyword
+add-highlighter shared/koka/code/ regex '\b(?:fun|fn|extern)\b' 0:keyword
+add-highlighter shared/koka/code/ regex '\sunsafe\s' 0:keyword
 add-highlighter shared/koka/code/ regex '\b(?:as|con|with|in|interface|raw|some|override)\b' 0:keyword
 add-highlighter shared/koka/code/ regex '\b(?:forall|exists)\b' 0:type
 add-highlighter shared/koka/code/ regex '\b(?:val|var)\b' 0:keyword
 add-highlighter shared/koka/code/ regex '\b(?:if|then|else|elif|match|return|handle|handler|mask|final|break|continue)\b' 0:keyword
 
 # types
-add-highlighter shared/koka/code/ regex '\b(?:int|float32|float64|int8|int16|int32|int64|char|list|vector)\b' 0:type
-
-# primitive values
-add-highlighter shared/koka/code/ regex '\b(?:True|False)\b' 0:value
+add-highlighter shared/koka/type_sig region ":" "(?:=|:=|,|\r|\n)" group
+add-highlighter shared/koka/type_sig/ fill identifier
+add-highlighter shared/koka/type_sig/ regex %{\b[^\s\d!<>]+(?:\d+[^\s\d!^<^>]*)*'?\b} 0:identifier
+add-highlighter shared/koka/type_sig/ regex '<|>' 0:identifier
+add-highlighter shared/koka/type_sig/ regex '->' 0:red
+add-highlighter shared/koka/type_sig/ regex '-(?<!>)' 0:blue
+# types for structs and types
+add-highlighter shared/koka/type_sig_types region "struct|type|effect" "\r|\n)" group
+add-highlighter shared/koka/type_sig_types/ regex %{\b[^\s\d!<>]+(?:\d+[^\s\d!^<^>]*)*'?\b} 0:identifier
+add-highlighter shared/koka/type_sig_types/ regex '<|>' 0:identifier
+# contructors
+add-highlighter shared/koka/code/ regex %{\b[A-Z][^\s\d!<>\(]*(?:\d+[^\s\d!<>\(]*)*'?\b} 0:identifier
 
 # integer literals
 add-highlighter shared/koka/code/ regex '\b[0-9](_?[0-9])*\b' 0:value
@@ -86,6 +96,8 @@ add-highlighter shared/koka/code/ regex '\b0x[0-9a-fA-F]+\.?[eE][-+]?[0-9a-fA-F]
 
 # builtin functions
 
+add-highlighter shared/koka/code/ regex '->|<-' 0:red
+add-highlighter shared/koka/code/ regex '-(?<!>)|(?<!<)-' 0:blue
 # Commands
 # ‾‾‾‾‾‾‾‾
 
